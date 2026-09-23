@@ -6,7 +6,7 @@
 [![CI](https://github.com/hf-jz/DeskAgent/actions/workflows/ci.yml/badge.svg)](https://github.com/hf-jz/DeskAgent/actions/workflows/ci.yml)
 
 **不用终端、不用切窗口 —— 桌面上点一下，直接和你的 AI Agent 对话。**
-面向所有使用 [hermes-agent](https://github.com/nous-research/hermes-agent) 的开发者：把你已经在跑的 hermes 引擎搬上桌面，变成一个随时待命的悬浮助手。
+**引擎无关**：内置 hermes-agent（随仓库分发，开箱即用），也能直接驱动你机器上已有的 **OpenClaw / Claude Code / Codex** 等 CLI agent；**DeepSeek Harness** 已被自动探测（执行器待接入，见下方"多运行时"）。探测不受 GUI 应用 PATH 限制影响，全部收进同一个气泡、任务树与任务台。
 
 [中文](#中文文档) · [English](#english-documentation)
 
@@ -84,6 +84,7 @@ $ hermes chat -q "帮我看看 src/ 目录结构，解释一下各模块的职�
 | **Node.js ≥ 24** | `node -v` 确认；推荐 nvm 管理 |
 | **一个模型 provider 的 API key** | 首次启动的对话式引导会写入 `~/.hermes/config.yaml` |
 | Python 3.11+ | **不需要预装 hermes**：仓库自带 `resources/hermes-agent` 与 `uv`。运行时按序找解释器：① 应用自己的 venv（不存在就用 `uv` 建并装依赖，这一步才有 1–3 分钟自举）→ ② 已装 hermes 的 `~/.hermes/hermes-agent/venv`（有就直接复用，秒级）→ ③ Homebrew / 系统 `python3` |
+| **（可选）外部 CLI agent** | OpenClaw / Claude Code / Codex 只要在 PATH 上就会被自动探测（设置 → Agents，可看状态/一键安装）；DeepSeek Harness 目前只到探测层。不装也能用内置引擎，两者可混用 |
 
 ### 1. 克隆 + 安装依赖
 
@@ -153,6 +154,7 @@ PASS  memory guard: …
 | 第一条消息等很久 | 首次引擎自举（1–3 分钟），日志里能看到 `agent pre-created, ready for tasks`；之后不再重复 |
 | 气泡一直"思考中" | 首字超时（默认 300s）会以 `[timeout]` 结束该轮并在日志打出 `bridge health: waiting_first_token`；检查 provider 连通性、key 是否有效 |
 | 自检 `model config` FAIL | `~/.hermes/config.yaml` 缺 provider/model，或 `~/.hermes/.env` 没有对应 key；跑一次对话式引导即可 |
+| 自检 `agent runners` 里某个 CLI 显示 `[not on PATH]` | GUI 应用拿不到登录 shell 的 PATH；应用已经用 `/bin/zsh -lc which <bin>` 探测（`src/main/agents/detect-cli.ts`）。仍找不到就在终端 `zsh -lc 'which <bin>'` 确认它真的可见 |
 | 自己打包的 .app 打不开 | 未签名构建：右键 → 打开，或 `xattr -dr com.apple.quarantine /Applications/DeskApp.app` |
 
 ---
@@ -163,6 +165,7 @@ PASS  memory guard: …
 |------|------|
 | 🐾 **桌面宠物** | 首次启动默认 **Strands**（WebGL 波浪动画）；可在 设置 → 外观 切换到 Mochi / Bobo / Nukey 等角色样式或上传照片宠物。120px 圆形悬浮，贴边自动隐藏 |
 | 🧬 **双模型大脑** | planner 规划拆解 + worker 执行（两个槽位在 设置 → LLM 里可配），成本驱动的任务分级路由 |
+| 🧩 **多运行时（引擎无关）** | 可执行 runner 共 5 个：内置 `desktop-agent`（vendored hermes-agent，默认）、`hermes-gateway`（本地 daemon :8642）、**OpenClaw**、**Claude Code**、**Codex**（OpenAI）—— 外部 CLI 走统一子进程契约（`src/main/agents/cli-executor.ts`）。**DeepSeek Harness** 已注册探测器（`registry.ts`），执行器待接入。设置 → Agents 自动探测 / 按需安装，全部共用气泡、任务树、审批与审计 |
 | 🌲 **任务树可视化** | 复杂任务拆成依赖树，节点状态实时推送 TaskTreePanel |
 | 💬 **多气泡并发** | 同时开多个对话窗口，各自独立 Agent 进程；全部轮次共用一条准入队列（默认最多 4 个并发，超出排队） |
 | 🧠 **思考时间线** | 思考折叠卡，推理 → 工具 → 结果全流程可展开；推理段落按真实边界切分 |
@@ -201,12 +204,18 @@ PASS  memory guard: …
 
 ## 技术栈与架构
 
-**Electron 39 + React 19 + TypeScript 5.9 + Vite 7 + Python Bridge（hermes-agent）**
+**Electron 39 + React 19 + TypeScript 5.9 + Vite 7 + Python Bridge（内置 hermes-agent）**
 
 ```text
 窗口层 → TaskRouter 分级路由
           ├─ simple  → BridgeManager：每个气泡一个独立 bridge.py 进程（JSON Lines over stdio）
           └─ complex → Orchestrator：planner 拆任务树 → worker 并发执行 → planner 汇总
+
+运行时层（引擎无关）→ 5 个可执行 runner（另：DeepSeek Harness 只有探测器，待接执行器）
+  desktop-agent（内置 hermes-agent，默认）| hermes-gateway（本地 daemon :8642）
+  openclaw | claude-code | codex（OpenAI）
+  外部 CLI 走同一契约：CliAgentExecutor 以子进程启动并把 prompt 注入 argv；
+  各自的 detector 报告就绪信号与能力（自检的 "agent runners" 一栏就是这张表）
 ```
 
 <p align="center">
@@ -315,6 +324,8 @@ python3 test_bridge_watchdog.py    # 首字看门狗：告警 → 超时终止 �
 
 重新分发时请一并保留上述声明。
 
+> 上表是**随仓库分发**的组件。OpenClaw / Claude Code / Codex / DeepSeek Harness 等外部 CLI **不随仓库分发**，由你自行安装（设置 → Agents 可探测与一键安装），各以其发布方许可为准。
+
 ## 安全
 
 DeskApp 会在你的机器上执行 agent 产生的 shell 命令，并读写 `~/.hermes` 下的模型配置与凭据；工具调用默认需要你在审批卡上确认（定时任务以无人值守模式运行，其每次自动放行都会写审计日志 `userData/audit/*.jsonl`）。漏洞请走私密渠道，详见 [SECURITY.md](SECURITY.md)。
@@ -332,7 +343,7 @@ Copyright (c) 2026 Hefei Jiuzhai Big Data Technology and Lituo Cloud Intelligenc
 # English Documentation
 
 **No terminal, no window switching — one click on the desktop and you're talking to your AI agent.**
-Built for everyone already running [hermes-agent](https://github.com/nous-research/hermes-agent): it puts your hermes engine on the desktop as an always-ready floating assistant.
+**Engine-agnostic**: it ships hermes-agent (works out of the box) and also drives the CLI agents you already have — **OpenClaw / Claude Code / Codex** — while **DeepSeek Harness** is auto-detected but not yet wired to an executor (see "Multiple runtimes" below). Detection is immune to the GUI-app PATH problem, and everything lands in the same bubbles, task tree and task center.
 
 > Repository `DeskAgent` on GitHub, application `DeskApp` (package `deskapp`) — the same project.
 
@@ -398,6 +409,7 @@ a 120px floating desktop pet appears (WebGL wave animation)
 | **Node.js ≥ 24** | check with `node -v`; nvm recommended |
 | **An API key for one model provider** | the first-run conversational onboarding writes it to `~/.hermes/config.yaml` |
 | Python 3.11+ | **you do not need hermes installed**: the repo ships `resources/hermes-agent` plus `uv`. The interpreter is resolved in order: ① the app's own venv (built with the bundled `uv` and populated on first use — this is the 1–3 minute bootstrap) → ② an existing hermes venv at `~/.hermes/hermes-agent/venv` (reused as-is, seconds) → ③ Homebrew / system `python3` |
+| **(Optional) external CLI agents** | OpenClaw / Claude Code / Codex are detected automatically when on PATH (Settings → Agents shows status and offers install); DeepSeek Harness is detection-only for now. You can also use the built-in engine alone — both can be mixed |
 
 ### 1. Clone and install
 
@@ -458,6 +470,7 @@ Then run the in-app environment check: **Settings → Activity → 🩺 Environm
 | The first message takes minutes | one-time engine bootstrap (1–3 min); look for `agent pre-created, ready for tasks` in the log, it won't repeat |
 | A bubble sits on "thinking…" forever | the first-output watchdog (300s default) ends the turn with `[timeout]` and logs `bridge health: waiting_first_token`; check provider connectivity and key validity |
 | Self-check reports `model config` FAIL | `~/.hermes/config.yaml` lacks provider/model or `~/.hermes/.env` lacks the key — run the onboarding once |
+| A CLI shows `[not on PATH]` in the self-check's `agent runners` | GUI apps don't inherit the login shell's PATH; the app probes with `/bin/zsh -lc which <bin>` (`src/main/agents/detect-cli.ts`). If it still isn't found, confirm `zsh -lc 'which <bin>'` works in a terminal |
 | A .app you built yourself won't open | unsigned build: right-click → Open, or `xattr -dr com.apple.quarantine /Applications/DeskApp.app` |
 
 ## Features
@@ -466,6 +479,7 @@ Then run the in-app environment check: **Settings → Activity → 🩺 Environm
 |------|------|
 | 🐾 **Desktop pet** | defaults to **Strands** (WebGL wave) on first run; switch in Settings → Appearance (Mochi / Bobo / Nukey … or upload a photo pet). 120px floating, auto-hides at screen edges |
 | 🧬 **Dual-model brain** | planner decomposes + worker executes (both slots configurable in Settings → LLM), cost-aware routing |
+| 🧩 **Multiple runtimes (engine-agnostic)** | 5 runnable runners: built-in `desktop-agent` (vendored hermes-agent, the default), `hermes-gateway` (local daemon :8642), **OpenClaw**, **Claude Code**, **Codex** (OpenAI) — external CLIs share one child-process contract (`src/main/agents/cli-executor.ts`). **DeepSeek Harness** is registered as a detector (`registry.ts`) but has no executor yet. Settings → Agents detects and installs them; all share bubbles, task tree, approvals and audit |
 | 🌲 **Task tree** | complex goals become a dependency tree, node state streamed live to TaskTreePanel |
 | 💬 **Multi-bubble** | several chat windows, each with its own agent process; all turns share one admission queue (4 concurrent by default, extra ones queue) |
 | 🧠 **Reasoning timeline** | thinking cards, expandable reasoning → tool → result; segments split on real protocol boundaries |
@@ -502,12 +516,19 @@ Month/week/day views, native `HH:mm` picker, click-to-edit (daily/weekly/monthly
 
 ## Stack and architecture
 
-**Electron 39 + React 19 + TypeScript 5.9 + Vite 7 + Python bridge (hermes-agent)**
+**Electron 39 + React 19 + TypeScript 5.9 + Vite 7 + Python bridge (vendored hermes-agent)**
 
 ```text
 window layer → TaskRouter
                 ├─ simple  → BridgeManager: one bridge.py process per bubble (JSON Lines over stdio)
                 └─ complex → Orchestrator: planner splits a task tree → workers run in parallel → planner reviews
+
+runtime layer (engine-agnostic) → 5 runnable runners (DeepSeek Harness: detector only, no executor yet)
+  desktop-agent (vendored hermes-agent, default) | hermes-gateway (local daemon :8642)
+  openclaw | claude-code | codex (OpenAI)
+  external CLIs share one contract: CliAgentExecutor spawns them as child processes with the
+  prompt injected into argv; each detector reports readiness and capabilities — that table is
+  exactly what the self-check's "agent runners" line prints
 ```
 
 <p align="center">
@@ -611,6 +632,8 @@ This project is MIT-licensed, but **ships third-party components** that keep the
 | Electron / React / Vite etc. | installed by `npm install`, not vendored | their respective licenses |
 
 Please keep these notices when redistributing.
+
+> The table above lists components **shipped with the repo**. External CLIs such as OpenClaw, Claude Code, Codex and DeepSeek Harness are **not bundled** — you install them yourself (Settings → Agents can detect and install them) and their own publishers' licenses apply.
 
 ## Security
 
