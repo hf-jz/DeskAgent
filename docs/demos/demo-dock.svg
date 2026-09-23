@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" font-family="-apple-system,'PingFang SC',sans-serif" style="background:#0b0f14">
+<style>
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: none } }
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+@keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.35 } }
+@keyframes blink { 0%,100% { opacity: 1 } 50% { opacity: 0 } }
+@keyframes ring { 0% { transform: scale(0.6); opacity: 0.8 } 100% { transform: scale(1.6); opacity: 0 } }
+@keyframes strandWave { 0%,100% { transform: rotate(-5deg); opacity: 0.45 } 50% { transform: rotate(5deg); opacity: 1 } }
+        .st { animation: strandWave 2.2s ease-in-out infinite }
+@keyframes slidePill { 0%,18% { transform: translateY(0) } 32%,52% { transform: translateY(44px) } 66%,86% { transform: translateY(88px) } 100% { transform: translateY(88px) } }
+@keyframes flow1 { 0% { transform: translate(0,0); opacity: 0 } 8% { opacity: 1 } 35% { transform: translate(-65px,150px) } 60% { transform: translate(-185px,220px) } 90%,100% { transform: translate(-350px,360px); opacity: 0 } }
+@keyframes flow2 { 0% { transform: translate(0,0); opacity: 0 } 8% { opacity: 1 } 30% { transform: translate(0px,70px) } 55% { transform: translate(125px,150px) } 80% { transform: translate(145px,310px) } 100% { transform: translate(145px,380px); opacity: 0 } }
+.fu { animation: fadeUp 0.7s ease both }
+.fi { animation: fadeIn 0.6s ease both }
+.pu { animation: pulse 1.6s ease-in-out infinite }
+.bl { animation: blink 0.9s step-end infinite }
+.dot1 { animation: flow1 5s ease-in-out infinite }
+.dot2 { animation: flow2 5s ease-in-out 2.5s infinite }
+</style>
+<title>DeskApp 滚轮切换窗口 · 卡片运行 / 停止</title>
+
+<g class="fi" style="animation-delay:0.0s">
+<g transform="translate(140,300) scale(1.08) rotate(-8)" style="transform-origin:120px 170px">
+<rect x="-100" y="-170" width="240" height="340" rx="20" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+<text x="-80" y="-130" font-size="16" fill="#e8edf2" font-weight="700" text-anchor="start">AI泡沫动态</text>
+<text x="-80" y="-108" font-size="11" fill="rgba(255,255,255,0.45)" font-weight="400" text-anchor="start">⏱ 0 9,17 * * *</text>
+<text x="-80" y="-30" font-size="26" fill="#34d399" font-weight="800" text-anchor="start">66 运行中</text>
+<circle cx="86" cy="130" r="22" fill="rgba(52,211,153,0.25)" stroke="#34d399" stroke-width="2"/>
+<text x="86" y="138" font-size="16" fill="#34d399" text-anchor="middle" class="bl" style="animation-delay:2.5s">⏸</text>
+<text x="86" y="138" font-size="16" fill="#34d399" text-anchor="middle" style="animation:fadeIn .1s 4.5s both">▶</text>
+</g></g>
+<g class="fi" style="animation-delay:0.3s">
+<g transform="translate(440,300) scale(0.9) rotate(-16)" style="transform-origin:120px 170px">
+<rect x="-100" y="-170" width="240" height="340" rx="20" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+<text x="-80" y="-130" font-size="13" fill="#e8edf2" font-weight="700" text-anchor="start">每日要闻</text>
+<text x="-80" y="-108" font-size="10" fill="rgba(255,255,255,0.45)" font-weight="400" text-anchor="start">⏱ 0 8 * * *</text>
+<text x="-80" y="-30" font-size="18" fill="rgba(255,255,255,0.45)" font-weight="800" text-anchor="start">33 休眠</text>
+<circle cx="86" cy="130" r="18" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.14)"/>
+<text x="86" y="136" font-size="13" fill="rgba(255,255,255,0.45)" text-anchor="middle">▶</text>
+</g></g>
+<g class="fi" style="animation-delay:0.6s">
+<g transform="translate(740,300) scale(0.9) rotate(-16)" style="transform-origin:120px 170px">
+<rect x="-100" y="-170" width="240" height="340" rx="20" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+<text x="-80" y="-130" font-size="13" fill="#e8edf2" font-weight="700" text-anchor="start">定时汇总</text>
+<text x="-80" y="-108" font-size="10" fill="rgba(255,255,255,0.45)" font-weight="400" text-anchor="start">⏱ 0 12 * * *</text>
+<text x="-80" y="-30" font-size="18" fill="rgba(255,255,255,0.45)" font-weight="800" text-anchor="start">33 休眠</text>
+<circle cx="86" cy="130" r="18" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.14)"/>
+<text x="86" y="136" font-size="13" fill="rgba(255,255,255,0.45)" text-anchor="middle">▶</text>
+</g></g>
+<g class="fu" style="animation-delay:6s">
+<text x="480" y="560" font-size="12" fill="rgba(255,255,255,0.45)" font-weight="400" text-anchor="middle">滚轮切换卡片 · 点击活动卡片 = 运行 / 停止 · 关闭 = 彻底停止（无影子任务）</text>
+</g>
+</svg>

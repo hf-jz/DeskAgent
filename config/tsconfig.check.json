@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.web.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "baseUrl": ".."
+  },
+  "include": [
+    "../src/renderer/src/**/*",
+    "../src/shared/**/*"
+  ]
+}

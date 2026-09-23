@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- ponytail: strict CSP — the app renders agent-supplied markdown; without
+       it any injected <script> runs in a webSecurity:false renderer (local
+       file access + preload API). file:/data: images stay allowed for pets.
+       wasm-unsafe-eval is required by onnxruntime-web (photo-pet cut-out in the
+       pet-customizer page, which is served from this same html); it permits
+       WebAssembly compilation only — injected JS is still blocked by 'self'. -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' file: data:; font-src 'self' data:; connect-src 'self'" />
+  <title>DeskApp</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden; background: transparent;
+    }
+    #root {
+      width: 100%; height: 100%;
+      overflow: hidden; background: transparent;
+    }
+    #root[data-page="pet"] {
+      user-select: none;
+      -webkit-user-select: none;
+      overflow: hidden;
+    }
+    /* P0-10: pre-paint theme — prevents white flash on dark mode startup.
+       Settings / fexplorer pages need a dark backdrop; pet / bubble / dock /
+       card windows are transparent frameless overlays — html must stay
+       transparent there. */
+    html { background: #000000; }
+    html[data-page="pet"],
+    html[data-page="bubble"],
+    html[data-page="dock"],
+    html[data-page="card"] { background: transparent; }
+    body { background: transparent; }
+  </style>
+  <!-- P0-10: Apply theme BEFORE React mounts → no flash of unstyled content -->
+  <script src="./theme.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="./src/main.tsx"></script>
+</body>
+</html>

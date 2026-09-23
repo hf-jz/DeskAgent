@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.node.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "../dist/shared",
+    "rootDir": "../src/shared",
+    "declaration": true
+  },
+  "include": ["../src/shared/**/*"]
+}

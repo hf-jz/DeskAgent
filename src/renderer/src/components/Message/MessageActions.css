@@ -1,0 +1,59 @@
+/**
+ * ChatGPT-style message action bar styles.
+ *
+ * Usage:
+ *   <div className="message">
+ *     <div className="message-content">...</div>
+ *     <div className="message-actions">
+ *       <ActionButton icon={Copy} label="Copy" onClick={...} />
+ *       <ActionButton icon={ThumbsUp} label="Good response" onClick={...} />
+ *       <ActionButton icon={ThumbsDown} label="Bad response" onClick={...} />
+ *     </div>
+ *   </div>
+ *
+ * The action bar is hidden by default and fades in on .message:hover.
+ *
+ * Responsive:
+ *   Desktop (>1024px):  all 6 icons shown
+ *   Tablet  (≤1024px):  hide Share and More
+ */
+
+.message {
+  position: relative;
+}
+
+.message-actions {
+  opacity: 0;
+  transform: translateY(-5px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.message:hover .message-actions {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ── Responsive: tablet (≤1024px) hide Share and More ── */
+@media (max-width: 1024px) {
+  .msg-action-share,
+  .msg-action-more {
+    display: none !important;
+  }
+}
+
+/* Copy success animation: scale 1 → 1.15 → 1 over 1.5s */
+@keyframes msg-copy-pop {
+  0%   { transform: scale(1); }
+  20%  { transform: scale(1.15); }
+  40%  { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+
+.msg-action-copied {
+  animation: msg-copy-pop 1.5s ease;
+}

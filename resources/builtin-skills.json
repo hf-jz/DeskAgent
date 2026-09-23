@@ -1,0 +1,341 @@
+[
+  {
+    "name": "organize-downloads",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "productivity/desktop",
+    "tags": [
+      "文件管理",
+      "自动化",
+      "整理"
+    ],
+    "trigger": "整理下载|organize downloads|下载文件夹|sort downloads",
+    "description": "自动整理下载文件夹：按文件类型分到子目录（images/documents/archives/installers/other），删除临时文件，归档旧文件。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# Organize Downloads\n\n## macOS/Linux\n```bash\ncd ~/Downloads\nmkdir -p images documents archives installers other 2>/dev/null\nfor f in *.jpg *.jpeg *.png *.gif *.svg *.webp *.heic 2>/dev/null; do mv \"$f\" images/ 2>/dev/null; done\nfor f in *.pdf *.doc* *.xls* *.ppt* *.txt *.md *.csv 2>/dev/null; do mv \"$f\" documents/ 2>/dev/null; done\nfor f in *.zip *.tar* *.gz *.7z *.rar 2>/dev/null; do mv \"$f\" archives/ 2>/dev/null; done\nfind . -maxdepth 1 -name \"*.download\" -delete 2>/dev/null\necho \"Done!\"\n```\n\n## Windows (PowerShell)\n```powershell\ncd $env:USERPROFILE\\Downloads\nmkdir images,documents,archives,installers,other -Force\nGet-ChildItem *.jpg,*.png,*.gif,*.svg,*.webp | Move-Item -Dest images/\nGet-ChildItem *.pdf,*.doc*,*.xls*,*.ppt*,*.txt,*.md,*.csv | Move-Item -Dest documents/\nGet-ChildItem *.zip,*.tar*,*.gz,*.7z,*.rar | Move-Item -Dest archives/\nRemove-Item *.download -Force\nWrite-Host \"Done!\"\n```"
+  },
+  {
+    "name": "clean-desktop",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "productivity/desktop",
+    "tags": [
+      "桌面整理",
+      "自动化"
+    ],
+    "trigger": "整理桌面|clean desktop|桌面太乱|清理桌面",
+    "description": "自动整理桌面：截图移到 Screenshots 文件夹，文档移到 Documents，按日期归档旧文件。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# Clean Desktop\n\n## macOS/Linux\n```bash\ncd ~/Desktop\nmkdir -p Screenshots Archive 2>/dev/null\nfor f in Screenshot* 屏幕快照* 2>/dev/null; do mv \"$f\" Screenshots/ 2>/dev/null; done\nfind . -maxdepth 1 -type f -mtime +30 2>/dev/null | while read f; do\n  d=$(date -r \"$f\" +%Y-%m 2>/dev/null); mkdir -p \"Archive/$d\"; mv \"$f\" \"Archive/$d/\"\ndone\necho \"Done!\"\n```\n\n## Windows (PowerShell)\n```powershell\ncd $env:USERPROFILE\\Desktop\nmkdir Screenshots,Archive -Force\nGet-ChildItem Screenshot* | Move-Item -Dest Screenshots/\n$d=(Get-Date -Format 'yyyy-MM'); mkdir \"Archive/$d\" -Force\nGet-ChildItem -File | Where {$_.LastWriteTime -lt (Get-Date).AddDays(-30)} | Move-Item -Dest \"Archive/$d/\"\nWrite-Host \"Done!\"\n```"
+  },
+  {
+    "name": "system-status",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "productivity/desktop",
+    "tags": [
+      "系统",
+      "监控",
+      "状态"
+    ],
+    "trigger": "系统状态|system status|CPU|内存|磁盘|电脑怎么样",
+    "description": "查看系统状态：CPU 使用率、内存占用、磁盘空间、运行时间、网络信息。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# System Status\n\n## macOS\n```bash\necho \"=== CPU ===\" && top -l 1 -n 0 | grep \"CPU usage\"\necho \"=== Memory ===\" && vm_stat | head -10\necho \"=== Disk ===\" && df -h / | tail -1\necho \"=== Uptime ===\" && uptime\n```\n\n## Linux\n```bash\necho \"=== CPU ===\" && top -bn1 | grep \"Cpu(s)\"\necho \"=== Memory ===\" && free -h\necho \"=== Disk ===\" && df -h / | tail -1\necho \"=== Uptime ===\" && uptime\n```\n\n## Windows (PowerShell)\n```powershell\nWrite-Host \"=== CPU ===\" ; Get-CimInstance Win32_Processor | Select LoadPercentage\nWrite-Host \"=== Memory ===\" ; Get-CimInstance Win32_OperatingSystem | Select TotalVisibleMemorySize,FreePhysicalMemory\nWrite-Host \"=== Disk ===\" ; Get-PSDrive C | Select Used,Free\nWrite-Host \"=== Uptime ===\" ; (Get-Date) - (Get-CimInstance Win32_OperatingSystem).LastBootUpTime\n```"
+  },
+  {
+    "name": "open-with",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "productivity/desktop",
+    "tags": [
+      "启动",
+      "应用"
+    ],
+    "trigger": "打开.*应用|启动.*程序|open with|打开浏览器",
+    "description": "打开文件/文件夹/URL 用指定应用。支持浏览器、编辑器、播放器等。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# Open With\n\n## macOS\n```bash\nopen \"https://github.com\"\nopen ~/Documents\nopen -a \"Visual Studio Code\" ~/project/\nopen \"x-apple.systempreferences:\"\n```\n\n## Linux\n```bash\nxdg-open \"https://github.com\"\nxdg-open ~/Documents\ncode ~/project/\n```\n\n## Windows (PowerShell)\n```powershell\nStart-Process \"https://github.com\"\nStart-Process explorer.exe -Args $env:USERPROFILE\\Documents\nStart-Process code -Args $env:USERPROFILE\\project\n```"
+  },
+  {
+    "name": "batch-rename",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "productivity/desktop",
+    "tags": [
+      "重命名",
+      "文件管理"
+    ],
+    "trigger": "批量重命名|rename files|改名",
+    "description": "批量重命名文件：添加前缀/后缀、替换文字、序号重命名、按日期重命名。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# Batch Rename\n\n## macOS/Linux (bash)\n```bash\n# Add prefix\nfor f in *.jpg; do mv \"$f\" \"vacation-$f\"; done\n# Numbered\nn=1; for f in *.jpg; do mv \"$f\" \"photo-$(printf '%03d' $n).jpg\"; ((n++)); done\n```\n\n## Windows (PowerShell)\n```powershell\n# Add prefix\nGet-ChildItem *.jpg | ForEach-Object { Rename-Item $_ -NewName \"vacation-$($_.Name)\" }\n# Numbered\n$n=1; Get-ChildItem *.jpg | ForEach-Object { Rename-Item $_ -NewName \"photo-{0:D3}.jpg\" -f $n; $n++ }\n```"
+  },
+  {
+    "name": "archive-project",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "productivity/desktop",
+    "tags": [
+      "归档",
+      "备份",
+      "项目管理"
+    ],
+    "trigger": "归档项目|archive project|备份项目|打包项目",
+    "description": "归档项目文件夹：压缩为 .tar.gz/.zip，排除 node_modules/.git/__pycache__，按日期命名。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# Archive Project\n\n## macOS/Linux\n```bash\ncd ~/projects/my-project\ntar -czf \"../$(basename $(pwd))-$(date +%Y%m%d).tar.gz\" --exclude='node_modules' --exclude='.git' --exclude='__pycache__' --exclude='dist' .\n```\n\n## Windows (PowerShell)\n```powershell\ncd $env:USERPROFILE\\projects\\my-project\n$name=Split-Path -Leaf (Get-Location)\nCompress-Archive -Path * -DestinationPath \"..\\$name-$(Get-Date -Format 'yyyyMMdd').zip\"\n```"
+  },
+  {
+    "name": "find-duplicates",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "productivity/desktop",
+    "tags": [
+      "去重",
+      "文件管理",
+      "清理"
+    ],
+    "trigger": "查找重复|find duplicates|重复文件|去重",
+    "description": "查找并报告重复文件：按 MD5 哈希匹配，显示重复组和可释放空间。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# Find Duplicates\n\n## macOS/Linux\n```bash\ncd ~/Documents\nfind . -type f -not -name '.DS_Store' -exec md5 -r {} \\; 2>/dev/null | sort | awk '{h=$1; $1=\"\"; if(h==p)print; p=h}'\n```\n\n## Windows (PowerShell)\n```powershell\ncd $env:USERPROFILE\\Documents\nGet-ChildItem -File -Recurse | Group-Object -Property {(Get-FileHash $_ -Algorithm MD5).Hash} | Where Count -gt 1 | ForEach {$_.Group}\n```"
+  },
+  {
+    "name": "screenshots-organizer",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "productivity/desktop",
+    "tags": [
+      "截图",
+      "整理"
+    ],
+    "trigger": "整理截图|screenshots|截图管理|organize screenshots",
+    "description": "整理桌面截图：移到专用文件夹，按月份分类，删除旧截图。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# Screenshots Organizer\n\n## macOS\n```bash\ncd ~/Desktop\nmkdir -p ~/Pictures/Screenshots/$(date +%Y-%m) 2>/dev/null\nfor f in Screenshot* 屏幕快照* 2>/dev/null; do\n  d=$(date -r \"$f\" +%Y-%m 2>/dev/null || echo $(date +%Y-%m))\n  mkdir -p ~/Pictures/Screenshots/$d\n  mv \"$f\" ~/Pictures/Screenshots/$d/\ndone\n```\n\n## Linux\n```bash\ncd ~/Desktop\nmkdir -p ~/Pictures/Screenshots/$(date +%Y-%m) 2>/dev/null\nfor f in Screenshot* 2>/dev/null; do\n  d=$(date -r \"$f\" +%Y-%m 2>/dev/null || echo $(date +%Y-%m))\n  mkdir -p ~/Pictures/Screenshots/$d\n  mv \"$f\" ~/Pictures/Screenshots/$d/\ndone\n```\n\n## Windows (PowerShell)\n```powershell\ncd $env:USERPROFILE\\Desktop\n$d=Get-Date -Format 'yyyy-MM'\nmkdir \"$env:USERPROFILE\\Pictures\\Screenshots\\$d\" -Force\nGet-ChildItem Screenshot*,*截图*,*截屏* | Move-Item -Dest \"$env:USERPROFILE\\Pictures\\Screenshots\\$d\\\"\n```"
+  },
+  {
+    "name": "find-large-files",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "productivity/desktop",
+    "tags": [
+      "磁盘",
+      "清理",
+      "空间"
+    ],
+    "trigger": "大文件|large files|磁盘空间|disk space|空间不够",
+    "description": "查找大文件：找出目录下最大的 20 个文件，显示大小和路径，帮助释放磁盘空间。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# Find Large Files\n\n## macOS/Linux\n```bash\ncd ~/Documents\nfind . -type f -exec ls -lh {} \\; 2>/dev/null | sort -k5 -hr | head -20\nfind . -type f -size +100M -exec ls -lh {} \\; 2>/dev/null\ndu -sh */ 2>/dev/null | sort -hr | head -10\n```\n\n## Windows (PowerShell)\n```powershell\ncd $env:USERPROFILE\\Documents\nGet-ChildItem -File -Recurse | Sort-Object Length -Descending | Select -First 20 | Format-Table Name,@{n='Size';e={[math]::Round($_.Length/1MB,1)}}\nGet-ChildItem -File -Recurse | Where Length -gt 100MB | Format-Table Name,Length\n```"
+  },
+  {
+    "name": "network-diagnosis",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "productivity/desktop",
+    "tags": [
+      "网络",
+      "诊断",
+      "ping"
+    ],
+    "trigger": "网络诊断|network diagnosis|网速|DNS|ping|网络故障",
+    "description": "网络诊断：检查网络连通性、DNS 解析、路由跳数、WiFi 信号强度。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# Network Diagnosis\n\n## macOS/Linux\n```bash\nping -c 2 8.8.8.8 2>/dev/null | grep 'bytes from\\|100% packet loss'\nnslookup github.com 2>/dev/null | grep -A1 'Name:'\nifconfig en0 2>/dev/null | grep 'inet '\nnetstat -an | grep ESTABLISHED | wc -l\n```\n\n## Windows (PowerShell)\n```powershell\nTest-Connection 8.8.8.8 -Count 2\nResolve-DnsName github.com\nGet-NetIPAddress -AddressFamily IPv4 | Where InterfaceAlias -like '*Ethernet*'\nGet-NetTCPConnection -State Established | Measure-Object | Select Count\n```"
+  },
+  {
+    "name": "git-helper",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "development/vcs",
+    "tags": [
+      "git",
+      "版本控制",
+      "提交",
+      "分支"
+    ],
+    "trigger": "git|commit|push|branch|merge|提交|推送|分支|合并",
+    "description": "Git 操作助手：查看状态、创建分支、提交代码、推送远程。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# Git Helper\nWorks identically on macOS/Linux/Windows (Git Bash or WSL required on Windows).\n\n```bash\ngit status\ngit checkout -b feature/my-feature\ngit add -A && git commit -m \"message\"\ngit push origin $(git branch --show-current)\ngit log --oneline -10\ngit reset --soft HEAD~1\n```"
+  },
+  {
+    "name": "text-extractor",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "productivity/documents",
+    "tags": [
+      "文本",
+      "OCR",
+      "提取"
+    ],
+    "trigger": "提取文本|extract text|OCR|读取PDF|read file",
+    "description": "文本提取器：从 PDF/图片/Word 中提取文本内容。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# Text Extractor\n\n## All platforms (Python)\n```bash\n# PDF: pip install pymupdf\npython3 -c \"import fitz; doc=fitz.open('doc.pdf'); [print(p.get_text()) for p in doc]\"\n\n# DOCX: pip install python-docx\npython3 -c \"from docx import Document; [print(p.text) for p in Document('file.docx').paragraphs]\"\n\n# Image OCR: pip install pytesseract pillow\npython3 -c \"from PIL import Image; import pytesseract; print(pytesseract.image_to_string(Image.open('img.png')))\"\n```"
+  },
+  {
+    "name": "time-tracker",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "productivity/notes",
+    "tags": [
+      "时间",
+      "追踪",
+      "记录"
+    ],
+    "trigger": "time tracker|时间追踪|记录时间|track time",
+    "description": "时间追踪器：记录任务耗时、生成时间报告。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# Time Tracker\n\n## macOS/Linux\n```bash\necho \"$(date +%Y-%m-%dT%H:%M:%S) - started: Task\" >> ~/time-log.txt\necho \"$(date +%Y-%m-%dT%H:%M:%S) - completed: Task\" >> ~/time-log.txt\ngrep \"$(date +%Y-%m-%d)\" ~/time-log.txt\n```\n\n## Windows (PowerShell)\n```powershell\nAdd-Content -Path $env:USERPROFILE\\time-log.txt -Value \"$(Get-Date -Format 's') - started: Task\"\nAdd-Content -Path $env:USERPROFILE\\time-log.txt -Value \"$(Get-Date -Format 's') - completed: Task\"\nSelect-String -Path $env:USERPROFILE\\time-log.txt -Pattern (Get-Date -Format 'yyyy-MM-dd')\n```"
+  },
+  {
+    "name": "markdown-preview",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "content/writing",
+    "tags": [
+      "markdown",
+      "预览",
+      "文档"
+    ],
+    "trigger": "markdown|preview|预览|md文件|README",
+    "description": "Markdown 预览：在浏览器中预览 .md 文件，支持实时刷新。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# Markdown Preview\n\n## All platforms (Python grip)\n```bash\npip3 install grip\ngrip README.md 0.0.0.0:6419 &\nsleep 2\n# macOS: open http://localhost:6419\n# Linux: xdg-open http://localhost:6419\n# Windows: start http://localhost:6419\n```\n\n## macOS only\n```bash\nqlmanage -p README.md 2>/dev/null\n```"
+  },
+  {
+    "name": "deskapp-help",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "productivity/desktop",
+    "tags": [
+      "帮助",
+      "deskapp",
+      "功能",
+      "快捷键"
+    ],
+    "trigger": "deskapp|help|帮助|功能|快捷键|怎么用|commands",
+    "description": "DeskApp 使用帮助：列出所有功能、快捷键、使用技巧。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# DeskApp Help\nDeskApp runs on macOS, Linux, and Windows. Here's what you can do:\n\n## Quick Tasks\n- Type anything to chat with your AI agent\n- Cmd/Ctrl+Shift+M to open a bubble\n- Drag pet to screen edge → auto-hide\n- Cmd/Ctrl+Shift+H to toggle hide/show\n- Cmd/Ctrl+Shift+, to open Settings\n\n## Agent Features\n- Click agent name in bubble header to switch\n- Auto-routing: say \"写代码\" → Claude Code\n- Budget lock in Settings → Appearance\n\n## Skills (macOS/Linux/Windows)\n- \"整理下载\" → organize files\n- \"系统状态\" → system info\n- \"网络诊断\" → network check\n\n## Data\n- Conversations auto-save (Settings → Sessions)\n- Tool call history (Settings → Activity)\n- Export/Import sessions from bubble"
+  },
+  {
+    "name": "password-generator",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "productivity/desktop",
+    "tags": [
+      "密码",
+      "安全",
+      "生成"
+    ],
+    "trigger": "password|密码|生成密码|generate password|随机密码",
+    "description": "密码生成器：生成强随机密码，支持自定义长度和字符集。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# Password Generator\n\n## macOS/Linux\n```bash\nLC_CTYPE=C tr -dc 'A-Za-z0-9!@#$%^&*' < /dev/urandom | head -c 16; echo\nLC_CTYPE=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 20; echo\nopenssl rand -hex 16\n```\n\n## Windows (PowerShell)\n```powershell\nAdd-Type -Assembly System.Web\n[System.Web.Security.Membership]::GeneratePassword(16, 4)\n```\n\n## All platforms (Python)\n```bash\npython3 -c \"import secrets,string; print(''.join(secrets.choice(string.ascii_letters+string.digits+'!@#') for _ in range(16)))\"\n```"
+  },
+  {
+    "name": "currency-converter",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "productivity/desktop",
+    "tags": [
+      "货币",
+      "汇率",
+      "换算"
+    ],
+    "trigger": "汇率|currency|convert|usd|cny|换算",
+    "description": "货币换算器：查询实时汇率，货币之间快速换算。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# Currency Converter\nWorks on all platforms (curl required).\n\n```bash\ncurl -s \"https://api.exchangerate-api.com/v4/latest/USD\" | python3 -c \"import sys,json; d=json.load(sys.stdin); print(f'1 USD = {d[chr(34)+chr(114)+chr(97)+chr(116)+chr(101)+chr(115)+chr(34)][chr(34)+chr(67)+chr(78)+chr(89)+chr(34)]} CNY')\"\n```\n\nOn Windows without curl, use PowerShell:\n```powershell\n$r=Invoke-RestMethod \"https://api.exchangerate-api.com/v4/latest/USD\"; Write-Host \"1 USD = $($r.rates.CNY) CNY\"\n```"
+  },
+  {
+    "name": "weather-check",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "productivity/desktop",
+    "tags": [
+      "天气",
+      "信息"
+    ],
+    "trigger": "天气|weather|温度|temperature|rain|下雨",
+    "description": "天气查询：获取指定城市的当前天气和温度。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# Weather Check\nWorks on all platforms.\n\n```bash\ncurl -s \"wttr.in/Beijing?format=3\"\ncurl -s \"wttr.in/Shanghai\"\n```\n\nWindows (PowerShell without curl):\n```powershell\nInvoke-RestMethod \"wttr.in/Beijing?format=3\"\n```"
+  },
+  {
+    "name": "json-formatter",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "development/backend",
+    "tags": [
+      "JSON",
+      "格式化",
+      "开发"
+    ],
+    "trigger": "json|format|格式化|prettify|压缩json",
+    "description": "JSON 格式化器：美化/压缩 JSON 文件，验证 JSON 语法。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# JSON Formatter\nWorks on all platforms (Python required).\n\n```bash\npython3 -m json.tool input.json\npython3 -m json.tool input.json > formatted.json\npython3 -c \"import json; json.load(open('input.json')); print('Valid')\" 2>&1\npython3 -c \"import json; print(json.dumps(json.load(open('input.json')), separators=(',',':')))\"\n```"
+  },
+  {
+    "name": "latex-report",
+    "version": "1.0.0",
+    "author": "DeskApp",
+    "category": "productivity/documents",
+    "tags": [
+      "latex",
+      "pdf",
+      "报告",
+      "技术方案",
+      "排版"
+    ],
+    "trigger": "latex|转latex|生成pdf|编译pdf|技术方案排版|latex报告|报告转pdf|方案设计文档|pdf文档",
+    "description": "技术方案/研究报告转 LaTeX 并编译 PDF：docx/markdown/需求内容提取→章节结构映射→ctexrep 中文模板（封面/水印/页眉/配色/代码块）→xelatex 编译→验证。",
+    "activeFor": [
+      "hermes"
+    ],
+    "instructions": "# LaTeX 技术方案报告生成 (latex-report)\n\n将技术方案 / 设计方案 / 研究报告内容转化为规范中文 LaTeX 文档并编译为 PDF。\n完整参考实现：`~/2026/14-projects/15-热回收焦炉/方案设计/fangan.tex`（949 行，含封面+水印+MPC 公式+JSON 指令块），小文档示例同目录 `note/note.tex`。\n\n## 工作流总览\n\n内容提取 → 结构映射到 LaTeX → 套用模板（ctexrep）→ xelatex 编译 → 验证 PDF\n\n## 1. 内容提取\n\n- 源为 .docx：\n  ```bash\n  python3 -c \"from docx import Document; d=Document('x.docx'); [print(p.style.name, '|', p.text) for p in d.paragraphs]\"\n  ```\n  按 style 名映射层级：Heading 1→`\\chapter`，Heading 2→`\\section`，Heading 3→`\\subsection`，正文段落原样搬运。\n- 源为 markdown：`#`→chapter，`##`→section，`###`→subsection。\n- 源为纯需求描述/口头需求：先自拟章节骨架（背景→现状→总体架构→详细设计→接口→效益），再逐节填充。\n\n## 2. 结构映射规则\n\n- 章节：`\\chapter{...}` / `\\section{...}` / `\\subsection{...}`；每章开头空一行，正文段落间空一行。\n- 公式：单行 `\\[ ... \\]`，多行 `align*`；变量用 `_{}` 下标；公式下方必须跟\"其中：…\"逐符号解释段（中文字段用 `\\text{}` 或全角）。\n- 表格：booktabs 三线表 `\\begin{tabular}{...}`，行用 `\\toprule / \\midrule / \\bottomrule`。\n- JSON / 代码：`\\begin{lstlisting}` 环境原样贴（模板已配样式，自动断行加行号）；正文中出现的下划线密集标识符（如 JSON 字段）用 `\\seqsplit{...}` 防溢出。\n- 强调术语 `\\textbf{}`；URL `\\url{}`（hyperref 已配蓝色链接）。\n\n## 3. 模板骨架（ctexrep + xelatex，直接复用）\n\n文档类与前导（从 fangan.tex 提炼，`标题`处替换为实际报告标题）：\n\n```latex\n\\documentclass[paper=a4,fontsize=12pt]{ctexrep}\n\\usepackage{geometry}\\geometry{a4paper,left=2.5cm,right=2.5cm,top=3cm,bottom=2.5cm}\n\\usepackage{setspace}\\onehalfspacing\n\\usepackage{fancyhdr}\\pagestyle{fancy}\\fancyhf{}\n\\fancyhead[L]{\\small\\kaishu 报告标题}\n\\fancyhead[R]{\\small\\thepage}\\renewcommand{\\headrulewidth}{0.5pt}\n\\usepackage[colorlinks=true,linkcolor=blue]{hyperref}\n\\usepackage{amsmath,amssymb,mathtools}\n\\usepackage{seqsplit}\n\\allowdisplaybreaks\n\\sloppy\n\\usepackage{tikz}\\usetikzlibrary{calc,shadows,fadings,decorations.pathmorphing,patterns,backgrounds}\n\\usepackage{xcolor,titlesec,enumitem}\n\\setcounter{tocdepth}{2}\n\\usepackage{eso-pic}\n\\AddToShipoutPictureBG{%\n  \\begin{tikzpicture}[remember picture,overlay]\n    \\foreach \\x in {1,5,...,21} \\foreach \\y in {2,6,...,30}\n      \\node[rotate=45,text=gray!35,font=\\sffamily\\footnotesize] at ([xshift=\\x cm,yshift=\\y cm]current page.south west) {水印文字};\n  \\end{tikzpicture}}\n\\definecolor{fo}{RGB}{255,120,20}\\definecolor{fy}{RGB}{255,200,50}\n\\definecolor{fr}{RGB}{220,40,20}\\definecolor{db}{RGB}{10,10,20}\n\\definecolor{sb}{RGB}{40,80,140}\\definecolor{gd}{RGB}{200,160,40}\n\\definecolor{redColor}{RGB}{227,0,26}\n\\definecolor{greenColor}{RGB}{0,120,31}\n\\definecolor{grayColor}{RGB}{32,32,32}\n\\definecolor{TitleGreen}{RGB}{0,120,55}\n\\usepackage{graphicx}\n\\usepackage{array}\n\\usepackage{listings}\n\\usepackage{booktabs}\n\\usepackage{multirow}\n\n% ---- listings 代码块配置 ----\n\\definecolor{codebg}{RGB}{248,248,252}\n\\definecolor{codeframe}{RGB}{200,200,220}\n\\lstset{\n  basicstyle=\\footnotesize\\ttfamily,\n  backgroundcolor=\\color{codebg},\n  frame=single,\n  rulecolor=\\color{codeframe},\n  framerule=0.5pt,\n  breaklines=true,\n  numbers=left,\n  numberstyle=\\tiny\\color{gray},\n  numbersep=5pt,\n  tabsize=2,\n  showstringspaces=false,\n  keywordstyle=\\color{sb}\\bfseries,\n  commentstyle=\\color{grayColor}\\itshape,\n  stringstyle=\\color{redColor},\n  captionpos=b,\n  aboveskip=8pt,\n  belowskip=8pt,\n}\n\\titleformat{\\chapter}[display]{\\normalfont\\huge\\bfseries\\sffamily}{\\color{sb}第\\thechapter 章}{20pt}{\\Huge}\n\\titleformat{\\section}{\\normalfont\\Large\\bfseries\\sffamily\\color{sb}}{\\thesection}{1em}{}\n\\titleformat{\\subsection}{\\normalfont\\large\\bfseries\\sffamily\\color{sb!80}}{\\thesubsection}{1em}{}\n```\n\n封面（双 logo + 绿标题 + 目录重起页码，`主标题/副标题/文档类型/单位`处替换）：\n\n```latex\n\\begin{document}\n\\newgeometry{left=30mm,right=30mm,top=25mm,bottom=25mm}\n\\begin{titlepage}\n\\thispagestyle{empty}\n\\setlength{\\parindent}{0pt}\n\\begin{flushright}\n\\includegraphics[height=1.5cm]{logo1.png}\n\\hspace{0.5cm}\n\\vrule height 1.4cm width 0.4pt\n\\hspace{0.5cm}\n\\includegraphics[height=1.5cm]{logo2.png}\n\\end{flushright}\n\\vspace{6cm}\n{\\color{TitleGreen}\\fontsize{32}{38}\\selectfont\\sffamily 主标题}\n\\vspace{0.6cm}\n{\\color{TitleGreen}\\Large\\sffamily 副标题}\n\\vspace{2cm}\n\\large 文档类型（技术方案）\n\\vspace{1cm}\n副描述（基于xxx技术 · 双驱动）\n\\vspace{0.2cm}\n\\small 附加说明行\n\\vspace{3cm}\n\\large 作者/单位\n\\vspace{0.2cm}\n\\today\n\\vfill\n\\end{titlepage}\n\\restoregeometry\n\\cleardoublepage\n\\pdfbookmark[0]{目录}{toc}\n\\tableofcontents\n\\newpage\n\\setcounter{page}{1}\n% 正文从这里开始: \\chapter{...}\n\\end{document}\n```\n\n## 4. 编译\n\n```bash\n# 方式A：直接 xelatex（必须编译 2~3 遍，让目录/交叉引用/页码收敛）\nxelatex -interaction=nonstopmode -synctex=1 main.tex   # 第1遍 生成 aux\nxelatex -interaction=nonstopmode -synctex=1 main.tex   # 第2遍 目录生效\nxelatex -interaction=nonstopmode -synctex=1 main.tex   # 第3遍 页码稳定（可选）\n\n# 方式B：latexmk（自动多遍，推荐）\nlatexmk -xelatex main.tex\n```\n\n`.latexmkrc`（放 tex 同目录）：\n\n```latex\n$xelatex = 'xelatex -interaction=nonstopmode -synctex=1 %O %S';\n$pdf_mode = 1;\n```\n\n## 5. 验证（必须，逐项确认）\n\n1. `grep -E \"^!|Error\" main.log` — 无致命错误（`Overfull` 警告可忽略，模板已 `\\sloppy`）\n2. PDF 已生成、页数合理：`pdfinfo main.pdf | grep Pages`（或 python fitz）\n3. 目录页章节齐全 — 只编 1 遍时目录缺失，必须重编\n4. 抽查：封面 logo/标题、页眉标题与页码、公式渲染、表格不溢出、JSON 块无乱码\n5. 确认图片文件与 tex 同目录（`\\includegraphics` 找不到图只出警告不出错）\n\n## 常见坑\n\n- ctexrep 必须 xelatex 编译；pdflatex 报中文字体错误。\n- 特殊字符须转义：`& % # _ { }` → `\\& \\% \\# \\_ \\{ \\}`；`^`/`~` 用 `\\textasciicircum`/`\\textasciitilde`。\n- 下划线密集的标识符放 lstlisting 或 `\\seqsplit{}`，直接写正文会溢出/变下标。\n- 公式变量解释段：LaTeX 中文与数学混排时，中文用全角标点，变量 `$x$` 行内公式。\n- 编译报 `Missing character` = 字体缺字形，改用 ctex 自带字体或 \\kaishu/\\songti 族。\n- 正文从封面后重计页码：`\\setcounter{page}{1}` 必须在 `\\tableofcontents` 之后。"
+  }
+]

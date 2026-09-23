@@ -1,0 +1,56 @@
+# Build + test gate. Before this workflow the only CI was release.yml (tag push),
+# so nothing verified a change between "it builds on my machine" and a release.
+# Patterns adapted from google/ax's .github/workflows (see docs/ax/README.md P0 #6):
+# pinned action SHAs, explicit least-privilege permissions, and a no-binaries-in-PR check.
+
+name: CI
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      # npm ci fails when package.json and package-lock.json disagree, so this
+      # doubles as the lockfile-drift check (ax does `go mod tidy` + git diff).
+      - run: npm ci
+      - name: Build (shared + main + preload + renderer)
+        run: npm run build
+      - name: Unit tests
+        run: npm run test
+
+  no-binaries:
+    # Build artifacts (.app/.dmg/.node/.so) must not be committed into the tree.
+    # resources/**, models/ and icons/ ship binaries on purpose — they are the
+    # app bundle contents and are exempt.
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+      - name: Reject committed binaries outside the shipping directories
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          git fetch origin "$BASE_REF"
+          BINARIES=$(git diff --numstat --diff-filter=ACM "origin/$BASE_REF...HEAD" \
+            | awk '$1 == "-" || $2 == "-" {print $3}' \
+            | grep -v -E '^(resources/|models/|icons/|docs/assets/)' || true)
+          if [ -n "$BINARIES" ]; then
+            echo "::error::Binary files must not be committed outside resources/, models/, icons/, docs/assets/. Found:"
+            echo "$BINARIES"
+            exit 1
+          fi

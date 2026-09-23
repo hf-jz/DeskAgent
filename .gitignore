@@ -1,0 +1,23 @@
+node_modules/
+dist/
+release/
+.DS_Store
+*.log
+.git-backup/
+__pycache__/
+*.pyc
+# Compiled JS artifacts — tsc outputs to dist/, these should never live in src/
+src/**/*.js
+src/**/*.js.map
+# TS incremental build metadata: tracking these makes a FRESH CLONE fail with
+# TS6305 ("output file … has not been built from source file") because tsc
+# believes the (never-cloned) dist/ outputs are current. Verified: build fails on
+# a clean clone with them tracked, passes once they are untracked.
+*.tsbuildinfo
+# LaTeX build byproducts (docs/*.tex are sources, these are not)
+*.aux
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk

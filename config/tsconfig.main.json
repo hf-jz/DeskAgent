@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.node.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "../dist/main",
+    "rootDir": "../src/main",
+    "declaration": true,
+    "noImplicitAny": false
+  },
+  "include": ["../src/main/**/*"],
+  "references": [{ "path": "./tsconfig.shared.json" }]
+}

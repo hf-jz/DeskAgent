@@ -1,0 +1,50 @@
+appId: com.deskapp.app
+productName: DeskApp
+copyright: Copyright © 2026 DeskApp
+
+directories:
+  output: release/
+
+files:
+  - dist/main/**/*
+  - dist/preload/**/*
+  - dist/renderer/**/*
+  - resources/**/*
+
+mac:
+  icon: resources/icon.icns
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  category: public.app-category.utilities
+  hardenedRuntime: true
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.inherit.plist
+
+win:
+  icon: resources/icon.png
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - arm64
+
+linux:
+  icon: resources/icon.png
+  category: Utility
+  target:
+    - target: AppImage
+      arch:
+        - x64
+    - target: deb
+      arch:
+        - x64
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+
+asarUnpack:
+  - resources/**/*

@@ -1,0 +1,111 @@
+{
+  "name": "deskapp",
+  "version": "0.1.0",
+  "description": "DeskApp — AI Agent desktop pet and manager",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hf-jz/DeskAgent.git"
+  },
+  "main": "dist/main/index.js",
+  "author": "DeskApp Team",
+  "license": "MIT",
+  "scripts": {
+    "build:shared": "tsc -p config/tsconfig.shared.json",
+    "build:main": "tsc -p config/tsconfig.main.json",
+    "build:preload": "tsc -p config/tsconfig.preload.json",
+    "build:renderer": "vite build --config config/vite.renderer.config.ts",
+    "build": "npm run build:shared && npm run build:main && npm run build:preload && npm run build:renderer",
+    "test": "vitest run",
+    "test:e2e": "vitest run --config vitest.config.e2e.ts",
+    "start": "npm run build && electron .",
+    "dev": "npm run build:shared && npm run build:main && npm run build:preload && concurrently \"npm run dev:renderer\" \"sleep 2 && electron .\"",
+    "dev:renderer": "node ./node_modules/.bin/vite --config config/vite.renderer.config.ts",
+    "build:mac": "npm run build && electron-builder --mac",
+    "build:win": "npm run build && electron-builder --win",
+    "build:linux": "npm run build && electron-builder --linux",
+    "dmg": "bash scripts/build-dmg.sh"
+  },
+  "build": {
+    "appId": "com.phaseai.deskapp",
+    "productName": "DeskApp",
+    "artifactName": "DeskApp-${version}-arm64.${ext}",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**",
+      "resources/**",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "resources/bridge.py",
+      "resources/install_builtin_skills.py",
+      "resources/hermes-agent/**",
+      "resources/uv/**",
+      "resources/logo.png",
+      "resources/icon.icns",
+      "resources/*.png"
+    ],
+    "mac": {
+      "icon": "resources/icon.icns",
+      "category": "public.app-category.productivity",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "entitlements": "scripts/entitlements.plist",
+      "entitlementsInherit": "scripts/entitlements.plist",
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "DeskApp 使用麦克风进行语音输入",
+        "NSSpeechRecognitionUsageDescription": "DeskApp 使用语音识别将语音转为文字"
+      }
+    },
+    "dmg": {
+      "window": {
+        "width": 540,
+        "height": 380
+      }
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "PhaseAI",
+        "repo": "deskapp",
+        "releaseType": "draft"
+      }
+    ]
+  },
+  "dependencies": {
+    "active-win": "^8.2.1",
+    "better-sqlite3": "^13.0.3",
+    "cron-parser": "^5.6.2",
+    "electron-updater": "^6.8.9",
+    "framer-motion": "^12.43.0",
+    "lucide-react": "^1.25.0",
+    "ogl": "^1.0.11",
+    "onnxruntime-web": "^1.27.0",
+    "react-markdown": "^10.1.0",
+    "rehype-katex": "^7.0.1",
+    "rehype-raw": "^7.0.0",
+    "rehype-sanitize": "^6.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "three": "^0.174.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.174.0",
+    "@vitejs/plugin-react": "^5.1.1",
+    "concurrently": "^9.2.3",
+    "electron": "^40.10.6",
+    "electron-builder": "^26.0.12",
+    "playwright-core": "^1.62.1",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.6",
+    "vitest": "^4.1.10"
+  }
+}

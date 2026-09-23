@@ -1,0 +1,23 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  mac:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci
+        # D1 #44: CI runs the exact same script as local builds (#43)
+      - name: Build + publish draft release
+        run: npm run dmg -- --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Signing secrets optional — build degrades loudly to unsigned when absent
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}

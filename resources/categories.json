@@ -1,0 +1,163 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "id": "development",
+      "icon": "🛠",
+      "label": "Development & Engineering",
+      "subcategories": [
+        { "id": "frontend", "label": "Frontend" },
+        { "id": "backend", "label": "Backend" },
+        { "id": "devops", "label": "DevOps" },
+        { "id": "vcs", "label": "Version Control" },
+        { "id": "testing", "label": "Testing & QA" },
+        { "id": "integration", "label": "Integration & MCP" },
+        { "id": "3d-graphics", "label": "3D & Graphics" }
+      ]
+    },
+    {
+      "id": "data-ai",
+      "icon": "📊",
+      "label": "Data & AI",
+      "subcategories": [
+        { "id": "training", "label": "Model Training" },
+        { "id": "mlops", "label": "MLOps" },
+        { "id": "processing", "label": "Data Processing" },
+        { "id": "safety", "label": "AI Safety & Red-Teaming" }
+      ]
+    },
+    {
+      "id": "productivity",
+      "icon": "⚡",
+      "label": "Productivity & Automation",
+      "subcategories": [
+        { "id": "desktop", "label": "Desktop Automation" },
+        { "id": "documents", "label": "Documents" },
+        { "id": "notes", "label": "Notes & Knowledge" },
+        { "id": "scheduling", "label": "Scheduling & Reminders" }
+      ]
+    },
+    {
+      "id": "research",
+      "icon": "🔬",
+      "label": "Research & Knowledge",
+      "subcategories": [
+        { "id": "academic", "label": "Academic Search" },
+        { "id": "web", "label": "Web Research" },
+        { "id": "learning", "label": "Learning & Education" }
+      ]
+    },
+    {
+      "id": "content",
+      "icon": "🎨",
+      "label": "Content & Media",
+      "subcategories": [
+        { "id": "image", "label": "Image Generation" },
+        { "id": "video", "label": "Video Production" },
+        { "id": "audio", "label": "Audio & Music" },
+        { "id": "writing", "label": "Writing & Text" },
+        { "id": "presentation", "label": "Presentations" }
+      ]
+    },
+    {
+      "id": "communication",
+      "icon": "💬",
+      "label": "Communication & Social",
+      "subcategories": [
+        { "id": "email", "label": "Email" },
+        { "id": "messaging", "label": "Messaging" },
+        { "id": "social", "label": "Social Media" }
+      ]
+    },
+    {
+      "id": "platform",
+      "icon": "🖥",
+      "label": "Platform & OS",
+      "subcategories": [
+        { "id": "macos", "label": "macOS" },
+        { "id": "windows", "label": "Windows" },
+        { "id": "linux", "label": "Linux" },
+        { "id": "smart-home", "label": "Smart Home" },
+        { "id": "gaming", "label": "Gaming" }
+      ]
+    },
+    {
+      "id": "agents",
+      "icon": "🤖",
+      "label": "Agents & Workflow",
+      "subcategories": [
+        { "id": "multi-agent", "label": "Multi-Agent" },
+        { "id": "autonomous", "label": "Autonomous Pipelines" },
+        { "id": "configuration", "label": "Agent Configuration" }
+      ]
+    }
+  ],
+
+  "_migration_map": {
+    "_comment": "Old flat category → new 'parent/child' path. Skill names without explicit mapping are auto-assigned below.",
+    "mappings": {
+      "software-development": "development/backend",
+      "github": "development/vcs",
+      "devops": "development/devops",
+      "mcp": "development/integration",
+      "clone-website": "development/frontend",
+      "claw3d": "development/3d-graphics",
+      "autonomous-ai-agents": "agents/autonomous",
+      "mlops": "data-ai/mlops",
+      "data-science": "data-ai/processing",
+      "continual-learning-curriculum": "data-ai/training",
+      "red-teaming": "data-ai/safety",
+      "research": "research/web",
+      "apple": "platform/macos",
+      "smart-home": "platform/smart-home",
+      "gaming": "platform/gaming",
+      "computer-use": "productivity/desktop",
+      "productivity": "productivity/documents",
+      "note-taking": "productivity/notes",
+      "document-intelligence": "productivity/documents",
+      "email": "communication/email",
+      "social-media": "communication/social",
+      "creative": "content/writing",
+      "baoyu-image-gen": "content/image",
+      "hyperframes": "content/video",
+      "remotion-video-toolkit": "content/video",
+      "frontend-slides": "content/presentation",
+      "guizang-ppt-skill": "content/presentation",
+      "media": "content/audio",
+      "beautiful-html-templates": "content/writing",
+      "babellive": "content/writing",
+      "dogfood": "development/testing",
+      "diagramming": "content/writing",
+      "inference-sh": "data-ai/mlops",
+      "feeds": "research/web",
+      "domain": "development/backend",
+      "gifs": "content/image"
+    },
+    "_per_skill": {
+      "architecture-diagram": "content/writing",
+      "ascii-art": "content/writing",
+      "ascii-video": "content/video",
+      "baoyu-article-illustrator": "content/writing",
+      "baoyu-comic": "content/writing",
+      "baoyu-image-gen": "content/image",
+      "baoyu-infographic": "content/writing",
+      "claude-design": "content/writing",
+      "comfyui": "content/image",
+      "design-md": "content/writing",
+      "excalidraw": "content/writing",
+      "humanizer": "content/writing",
+      "ideation": "content/writing",
+      "manim-video": "content/video",
+      "p5js": "content/writing",
+      "pixel-art": "content/image",
+      "popular-web-designs": "content/writing",
+      "pretext": "content/writing",
+      "sketch": "content/writing",
+      "songwriting-and-ai-music": "content/audio",
+      "touchdesigner-mcp": "content/writing",
+      "heartmula": "content/audio",
+      "deskapp": "development/backend",
+      "deskapp-dev": "development/backend"
+    }
+  }
+}

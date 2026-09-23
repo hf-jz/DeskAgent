@@ -1,0 +1,265 @@
+/* ── Theme CSS Variables (P0-10) ── */
+/* Based on openworker design token table from 03-frontend-ui.md */
+/* Fallback to current deskapp dark values when CSS vars aren't supported */
+
+/* ── Dark Theme (Liquid Glass Emerald — based on wenxibuddy design system) ── */
+:root,
+[data-theme="dark"] {
+  --bg-page: #000000;
+  --bg-panel: rgba(12, 16, 28, 0.35);
+  --bg-card: rgba(255, 255, 255, 0.045);
+  --bg-input: rgba(0, 0, 0, 0.35);
+  --bg-glass: linear-gradient(165deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.03) 35%, rgba(255,255,255,0.015) 70%, rgba(255,255,255,0.04) 100%), rgba(12, 16, 28, 0.28);
+  --bg-glass-heavy: rgba(8, 10, 16, 0.95);
+
+  --ink: rgba(255, 255, 255, 0.92);
+  --ink-secondary: rgba(255, 255, 255, 0.68);
+  --ink-muted: rgba(255, 255, 255, 0.45);
+  --ink-faint: rgba(255, 255, 255, 0.32);
+
+  --line: rgba(255, 255, 255, 0.07);
+  --line-strong: rgba(255, 255, 255, 0.12);
+
+  --accent: #34d399;
+  --accent-soft: rgba(16, 185, 129, 0.12);
+  --accent-text: #6ee7b7;
+  --accent-line: rgba(16, 185, 129, 0.28);
+
+  --ok: #34d399;
+  --ok-soft: rgba(52, 211, 153, 0.12);
+  --warn: #f59e0b;
+  --warn-soft: rgba(245, 158, 11, 0.12);
+  --danger: #f43f5e;
+  --danger-soft: rgba(244, 63, 94, 0.12);
+  --info: #38bdf8;
+  --info-soft: rgba(56, 189, 248, 0.10);
+
+  --solid: rgba(255, 255, 255, 0.10);
+  --on-solid: #04120c;
+  --bg-hover: rgba(255, 255, 255, 0.06);
+  --bg-elev: rgba(255, 255, 255, 0.06);
+
+  --warn-text: #fbbf24;
+  --danger-text: #f87171;
+  --ok-text: #34d399;
+  --accent-2: #38bdf8;
+  --accent-2-soft: rgba(56, 189, 248, 0.06);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.65);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+
+  /* Focus ring: single accessible vocabulary for all interactive elements */
+  --focus-ring: 0 0 0 2px var(--bg-page, #000), 0 0 0 4px var(--accent);
+
+  /* Bubble: emerald-to-sky liquid glass gradient */
+  --bubble-bg: linear-gradient(160deg, rgba(52, 211, 153, 0.55), rgba(16, 185, 129, 0.75));
+  --bubble-bg-rev: linear-gradient(160deg, rgba(16, 185, 129, 0.75), rgba(52, 211, 153, 0.55));
+}
+
+/* ── Light Theme ── */
+[data-theme="light"] {
+  --bg-page: #f5f6f7;
+  --bg-panel: rgba(255, 255, 255, 0.95);
+  --bg-card: rgba(0, 0, 0, 0.02);
+  --bg-input: rgba(0, 0, 0, 0.04);
+  --bg-glass: rgba(255, 255, 255, 0.98);
+  --bg-glass-heavy: rgba(255, 255, 255, 0.98);
+
+  --ink: #0c1216;
+  --ink-secondary: #3a3d42;
+  --ink-muted: #5b616b;
+  --ink-faint: #9aa1aa;
+
+  --line: rgba(0, 0, 0, 0.08);
+  --line-strong: rgba(0, 0, 0, 0.15);
+
+  --accent: #059669;
+  --accent-soft: rgba(5, 150, 105, 0.08);
+  --accent-text: #047857;
+  --accent-line: rgba(5, 150, 105, 0.35);
+
+  --ok: #059669;
+  --ok-soft: rgba(5, 150, 105, 0.08);
+  --warn: #b45309;
+  --warn-soft: rgba(180, 83, 9, 0.08);
+  --danger: #b91c1c;
+  --danger-soft: rgba(185, 28, 28, 0.08);
+  --info: #0891b2;
+  --info-soft: rgba(8, 145, 178, 0.08);
+
+  --solid: #059669;
+  --on-solid: #fff;
+  --bg-hover: rgba(0, 0, 0, 0.05);
+  --bg-elev: #ffffff;
+
+  --warn-text: #b45309;
+  --danger-text: #b91c1c;
+  --ok-text: #059669;
+  --accent-2: #0891b2;
+  --accent-2-soft: rgba(8, 145, 178, 0.08);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.10);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.15);
+
+  /* Bubble: emerald-to-teal gradient for light mode */
+  --bubble-bg: linear-gradient(160deg, rgba(5, 150, 105, 0.6), rgba(8, 145, 178, 0.4));
+  --bubble-bg-rev: linear-gradient(160deg, rgba(8, 145, 178, 0.4), rgba(5, 150, 105, 0.6));
+}
+
+/* ── Transition (optional, disabled by default to avoid flash) ── */
+[data-theme-transition] {
+  transition: background 200ms ease, color 200ms ease;
+}
+[data-theme-transition] * {
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+/* ── Settings page: base surface follows theme tokens ──
+   (pet/bubble windows stay transparent — their glass styling is intrinsic) */
+body[data-page="settings"] {
+  background: var(--bg-page);
+  color: var(--ink);
+}
+
+/* ── Craft layer (impeccable operate mode) ── */
+
+/* Accessible focus vocabulary: one ring everywhere, keyboard-only */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+/* Selection follows the accent */
+::selection {
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+/* Quiet scrollbars that match the surface */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--ink-faint); }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* Numeric data reads stable */
+.tabular-nums, td, .stat, .kpi {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Reduced motion: collapse all animation to instant (mandatory floor) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Liquid Glass utility classes (wenxibuddy design system) ── */
+
+.liquid-glass {
+  position: relative;
+  background: var(--bg-glass);
+  backdrop-filter: blur(40px) saturate(160%);
+  -webkit-backdrop-filter: blur(40px) saturate(160%);
+  border-radius: var(--radius-xl, 22px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    0 18px 50px -12px rgba(0,0,0,0.65);
+}
+
+.liquid-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(125deg,
+    rgba(255,255,255,0.22) 0%,
+    rgba(255,255,255,0.05) 18%,
+    transparent 42%,
+    transparent 68%,
+    rgba(255,255,255,0.04) 100%);
+  opacity: 0.85;
+  mix-blend-mode: screen;
+}
+
+.liquid-pill {
+  background: rgba(255,255,255,0.045);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.16),
+    0 8px 24px rgba(0,0,0,0.35);
+}
+
+.liquid-input {
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 4px 16px rgba(0,0,0,0.25);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  color: var(--ink);
+}
+
+.liquid-input:focus {
+  border-color: var(--accent-line);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    0 0 0 3px var(--accent-soft),
+    0 4px 16px rgba(0,0,0,0.25);
+}
+
+.liquid-btn-primary {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 45%, #059669 100%);
+  color: #04120c;
+  border: 1px solid rgba(167,243,208,0.45);
+  border-radius: 10px;
+  box-shadow:
+    0 0 0 1px rgba(16,185,129,0.2),
+    0 0 24px rgba(16,185,129,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.45);
+  transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), box-shadow 0.25s ease;
+}
+
+.liquid-btn-primary:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 1px rgba(16,185,129,0.3),
+    0 0 32px rgba(16,185,129,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.5);
+}
+
+.liquid-btn-ghost {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+  color: var(--ink);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.liquid-btn-ghost:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.18);
+}
