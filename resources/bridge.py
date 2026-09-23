@@ -27,6 +27,18 @@ from pathlib import Path
 # ── Protocol version ──
 PROTOCOL_VERSION = 1
 
+# ── Frame channel ──
+# ponytail: hermes-agent prints banners/logs with print(), which used to land in
+# the very same pipe as our JSON frames — the app logged each one as
+# "unparseable bridge line". Capture the stream as it exists right now (the
+# python tests replace sys.stdout before exec'ing this file to capture frames)
+# and point sys.stdout at stderr, so every other in-process print stays off the
+# protocol channel. Ceiling: child processes that write to fd 1 directly still
+# bypass this; point it at os.devnull instead if the engine chatter is unwanted.
+_frame_out = sys.stdout
+if sys.stderr is not None and _frame_out is not sys.stderr:
+    sys.stdout = sys.stderr
+
 AGENT_SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'hermes-agent')
 os.environ['PYTHONUNBUFFERED'] = '1'
 
@@ -41,8 +53,8 @@ def emit(d):
     src/main/agents/bridge-protocol.ts.
     """
     d.setdefault('v', PROTOCOL_VERSION)
-    sys.stdout.write(json.dumps(d, ensure_ascii=False) + '\n')
-    sys.stdout.flush()
+    _frame_out.write(json.dumps(d, ensure_ascii=False) + '\n')
+    _frame_out.flush()
 
 
 def error_frame(message, code='internal'):
